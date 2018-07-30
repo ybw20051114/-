@@ -161,5 +161,6 @@ int main()
             cout << qs(x, y) << endl;
         }
     }
+    cout<<"xxxx"<<endl;
     return 0;
 }
