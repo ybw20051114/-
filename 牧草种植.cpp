@@ -46,6 +46,7 @@ void dfs1(int u, int fa)
 void dfs2(int x, int topf)
 {
     id[x] = ++cnt;
+    // cout<<x<<" "<<id[x]<<"xxx\n";
     top[x] = topf;
     if(!son[x])
         return;
@@ -70,6 +71,7 @@ ll qu(ll a[], int x)
     ll ans = 0;
     for(; x; x -= lowbit(x))
         ans = (ans + a[x]) % mod;
+    // ,cout<<x<<" "<<ans<<endl;
     return ans;
 }
 void upd(ll a[], int x, int ans)
@@ -86,28 +88,32 @@ void Upd(int x, int y, int z)
 }
 long long Qu(int l, int r)
 {
-    long long suml = (sum[l - 1] + (l * qu(de, l - 1)) % mod - qu(dei,
-                      l - 1) + mod) % mod;
-    long long sumr = (sum[r] + ((r + 1) * qu(de, r)) % mod - qu(dei,
-                      r) + mod) % mod;
-    cout<<l<<" "<<r<<endl;
+    long long suml = ((l * qu(de, l - 1)) % mod - qu(dei,
+                      l - 1)%mod + mod) % mod;
+    long long sumr = (((r + 1) * qu(de, r)) % mod - qu(dei,
+                      r)%mod + mod) % mod;
+    // cout << qu(de,r)*4 << " " << suml<<"XXXX"<<l<<" "<<r << endl;
     return (mod + sumr - suml) % mod;
 }
 //---------------------------树状数组-------------------------------------
 void ups(int x, int y, int k)
 {
     k %= mod;
+    
+    // cout << x << " " << y << "\n";
     while(top[x] != top[y])
     {
         if(dep[top[x]] < dep[top[y]])
             swap(x, y);
-        cout << id[top[x]] << " " << id[x]<<" "<<k << "\n";
+        // cout << top[x] << " " << id[x] << " " << k << " ";
         Upd(id[top[x]], id[x], k);
         x = f[top[x]];
+        // cout<<x<<"\n";
     }
     if(dep[x] > dep[y])
         swap(x, y);
     Upd(id[x], id[y], k);
+    cout<<Qu(id[x],id[y])<<endl;
 }
 int qs(int x, int y)
 {
@@ -116,13 +122,16 @@ int qs(int x, int y)
     {
         if(dep[top[x]] < dep[top[y]])
             swap(x, y);
-        cout<<x<<" "<<id[x]<<endl;
         ans += Qu(id[top[x]], id[x]);
         ans %= mod;
         x = f[top[x]];
     }
+    if(dep[x]==dep[y])
+        return ans;
     if(dep[x] > dep[y])
         swap(x, y);
+    // cout << ans << " " << x << " " << y << endl;
+    
     ans += Qu(id[x], id[y]);
     return ans % mod;
 }
@@ -140,10 +149,12 @@ int main()
         add(x, y);
         add(y, x);
     }
-    cnt = 1;
+    cnt = 0;
     dep[0] = 0;
     dfs1(rt, 0);
     dfs2(rt, rt);
+    // for(int i = 1; i <= n; i++)
+    // cout << f[i] << " " << son[i] << endl;
     for(int i = 1; i <= m; i++)
     {
         int x, z, y;
@@ -153,7 +164,9 @@ int main()
         {
             cin >> x >> y;
             z = 1;
-            ups(x, y, z);
+            if(x==y)
+                continue;
+            ups(x, f[y], z);
         }
         if(t == "Q")
         {
@@ -161,6 +174,5 @@ int main()
             cout << qs(x, y) << endl;
         }
     }
-    cout<<"xxxx"<<endl;
     return 0;
 }
